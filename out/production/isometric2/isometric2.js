@@ -5,8 +5,8 @@ var isometric2 = function (_, Kotlin) {
   'use strict';
   var Kind_CLASS = Kotlin.Kind.CLASS;
   var roundToInt = Kotlin.kotlin.math.roundToInt_yrwdxr$;
-  var Random = Kotlin.kotlin.random.Random;
   var math = Kotlin.kotlin.math;
+  var Random = Kotlin.kotlin.random.Random;
   var listOf = Kotlin.kotlin.collections.listOf_i5x0yv$;
   var Math_0 = Math;
   var Unit = Kotlin.kotlin.Unit;
@@ -36,19 +36,18 @@ var isometric2 = function (_, Kotlin) {
     this.y = y;
     this.mouse = mouse;
     this.window_0 = 50;
-    this.grabWindow_0 = 10;
     this.arms = listOf([new Arm(this.x, this.y, -8.0, -8.0), new Arm(this.x, this.y, -8.0, +5.0), new Arm(this.x, this.y, +5.0, -8.0), new Arm(this.x, this.y, +5.0, +5.0)]);
     this.speed = 2.0;
   }
   CircleRenderable.prototype.render_f69bme$ = function (context) {
-    var tmp$, tmp$_0, tmp$_1, tmp$_2;
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3;
     var dirPosition = new Coordinate(this.mouse.x, this.mouse.y);
     var dirVector = (new Vector(dirPosition.x - this.x, dirPosition.y - this.y)).normalize();
-    this.speed = 0.0;
-    var tmp$_3;
-    tmp$_3 = this.arms.iterator();
-    while (tmp$_3.hasNext()) {
-      var element = tmp$_3.next();
+    this.speed = 0.5;
+    var tmp$_4;
+    tmp$_4 = this.arms.iterator();
+    while (tmp$_4.hasNext()) {
+      var element = tmp$_4.next();
       var length = (new Vector(element.grabX - this.x, element.grabY - this.y)).length() / (this.mouse.leftButton ? 30 : 50);
       this.speed += length;
     }
@@ -66,38 +65,67 @@ var isometric2 = function (_, Kotlin) {
         }
       }
     }
-    var tmp$_4;
-    tmp$_4 = this.arms.iterator();
-    while (tmp$_4.hasNext()) {
-      var element_0 = tmp$_4.next();
-      element_0.startX = this.x + element_0.offsetX;
-      element_0.startY = this.y + element_0.offsetY;
-      context.strokeStyle = 'rgb(255,255,255)';
-      context.lineWidth = 2.0;
-      context.beginPath();
-      context.moveTo(element_0.startX, element_0.startY);
-      context.lineTo(element_0.grabX, element_0.grabY);
-      context.stroke();
-      var lineLength = (element_0.grabX - element_0.startX) * (element_0.grabX - element_0.startX) + (element_0.grabY - element_0.startY) * (element_0.grabY - element_0.startY);
-      var lineVector = new Vector(element_0.grabX - element_0.startX, element_0.grabY - element_0.startY);
+    var y = dirPosition.y - this.y;
+    var x = dirPosition.x - this.x;
+    var lookingAngle = Math_0.atan2(y, x);
+    var angleOffset = math.PI / 3;
+    tmp$_3 = this.arms;
+    for (var i = 0; i !== tmp$_3.size; ++i) {
+      var tmp$_5;
+      var arm = this.arms.get_za3lpa$(i);
+      var x_0 = lookingAngle - angleOffset + i;
+      arm.offsetX = 9 * Math_0.cos(x_0);
+      var x_1 = lookingAngle - angleOffset + i;
+      arm.offsetY = 9 * Math_0.sin(x_1);
+      arm.startX = this.x + arm.offsetX;
+      arm.startY = this.y + arm.offsetY;
+      var lineLength = (arm.grabX - arm.startX) * (arm.grabX - arm.startX) + (arm.grabY - arm.startY) * (arm.grabY - arm.startY);
+      var lineVector = new Vector(arm.grabX - arm.startX, arm.grabY - arm.startY);
       if (lineLength < 100 || lineLength > 2000) {
-        var y = element_0.startY - this.y;
-        var x = element_0.startX - this.x;
-        var angle = Math_0.atan2(y, x);
-        var armLength = Random.Default.nextDouble_lu1900$(10.0, 80.0);
-        var newAngle = angle + Random.Default.nextDouble_lu1900$(-math.PI / 2, math.PI / 2);
+        var y_0 = arm.startY - this.y;
+        var x_2 = arm.startX - this.x;
+        var angle = Math_0.atan2(y_0, x_2);
+        var minLength = i === 1 || i === 2 ? 40.0 : 20.0;
+        var armLength = Random.Default.nextDouble_lu1900$(minLength, 90.0);
+        switch (i) {
+          case 0:
+            tmp$_5 = angle + Random.Default.nextDouble_lu1900$(0.0, math.PI / 2);
+            break;
+          case 1:
+            tmp$_5 = angle + Random.Default.nextDouble_lu1900$(-math.PI / 8, math.PI / 3);
+            break;
+          case 2:
+            tmp$_5 = angle + Random.Default.nextDouble_lu1900$(-math.PI / 3, math.PI / 8);
+            break;
+          case 3:
+            tmp$_5 = angle + Random.Default.nextDouble_lu1900$(-math.PI / 2, 0.0);
+            break;
+          default:tmp$_5 = angle + Random.Default.nextDouble_lu1900$(-math.PI / 6, math.PI / 6);
+            break;
+        }
+        var newAngle = tmp$_5;
         var newX = this.x + armLength * Math_0.cos(newAngle);
         var newY = this.y + armLength * Math_0.sin(newAngle);
-        element_0.grabX = newX;
-        element_0.grabY = newY;
+        arm.grabX = newX;
+        arm.grabY = newY;
+      }
+       else {
+        context.strokeStyle = 'rgb(255,255,255)';
+        context.lineWidth = 2.0;
+        context.beginPath();
+        context.moveTo(arm.startX, arm.startY);
+        context.lineTo(arm.grabX, arm.grabY);
+        context.stroke();
       }
     }
-    var tmp$_5;
-    tmp$_5 = this.arms.iterator();
-    while (tmp$_5.hasNext()) {
-      var element_1 = tmp$_5.next();
+    var tmp$_6;
+    tmp$_6 = this.arms.iterator();
+    while (tmp$_6.hasNext()) {
+      var element_0 = tmp$_6.next();
       context.fillStyle = 'rgb(255,0,0)';
-      context.fillRect(element_1.startX, element_1.startY, 5.0, 5.0);
+      context.beginPath();
+      context.arc(element_0.startX, element_0.startY, 2.0, 0.0, 2 * math.PI);
+      context.fill();
     }
   };
   CircleRenderable.$metadata$ = {
