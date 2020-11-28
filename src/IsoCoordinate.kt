@@ -1,0 +1,1 @@
+data class IsoCoordinate(val x: Double, val y: Double)

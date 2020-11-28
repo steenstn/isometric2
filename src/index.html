@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Isometric</title>
+    <style>
+    body {
+      margin:0px;
+      padding:0px;
+      text-align:center;
+      background-color: #000;
+    }
+
+    canvas{
+      outline:0;
+      border:1px solid #666;
+  	  image-rendering: optimizeSpeed;             /* Older versions of FF          */
+  	  image-rendering: -moz-crisp-edges;          /* FF 6.0+                       */
+  	  image-rendering: -webkit-optimize-contrast; /* Safari                        */
+  	  image-rendering: -o-crisp-edges;            /* OS X & Windows Opera (12.02+) */
+  	  image-rendering: pixelated;                 /* Awesome future-browsers       */
+  	  -ms-interpolation-mode: nearest-neighbor;   /* IE                            */
+  	  transform:scale(2);
+  	  transform-origin: top;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top:40px;
+    }
+  </style>
+</head>
+<body>
+<canvas id='c'></canvas>
+<script type="text/javascript" src="../out/production/isometric2/lib/kotlin.js"></script>
+<script type="text/javascript" src="../out/production/isometric2/isometric2.js"></script>
+
+</body>
+</html>
